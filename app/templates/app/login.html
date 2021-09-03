@@ -7,7 +7,13 @@
   <div class="col-sm-6 offset-sm-3">
    <h3>Login</h3>
    <hr>
+   {% if messages %}
+    {% for message in messages %}
+     <p{% if message.tags %} class="alert alert-{{ message.tags }} mb-5" {% endif %}> {{ message }}</p>
+    {% endfor %}
+   {% endif %}
    <form action="" method="post" novalidate class="shadow p-5">
+   {% csrf_token %}
     <div class="mb-3">
      <label for="exampleInputEmail1" class="form-label">Email</label>
      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
