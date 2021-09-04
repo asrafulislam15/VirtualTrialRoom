@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from .models import Cart,Customer,Product,OrderPlaced
 from .forms import CustomarRegistrationForm,CustomerProfileForm
@@ -17,7 +17,27 @@ class ProductDetailView(View):
   return render(request, 'app/productdetail.html',{'product':product})
 
 def add_to_cart(request):
- return render(request, 'app/addtocart.html')
+ user=request.user
+ product_id = request.GET.get('prod_id')
+ product = Product.objects.get(id=product_id)
+ Cart(user=user, product=product).save()
+ return redirect ('/cart')
+
+def show_cart(request):
+  if request.user.is_authenticated:
+    user = request.user
+    cart = Cart.objects.filter(user=user)
+    print(cart)
+    amount= 0.0
+    shippinh_amount=70.0
+    total_amount=0.0
+    cart_product = [p for p in Cart.objects.all() if p.user==user]
+
+    if cart_product:
+       for p in cart_product:
+          tempamount = (p.quantity * p.product.discounted_price)
+    return render(request, 'app/addtocart.html', {'carts':cart}
+    )
 
 def buy_now(request):
  return render(request, 'app/buynow.html')
