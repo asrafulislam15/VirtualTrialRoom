@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from .models import Cart,Customer,Product,OrderPlaced
-from .forms import CustomarRegistrationForm
+from .forms import CustomarRegistrationForm,CustomerProfileForm
 from django.contrib import messages
 
 
@@ -26,22 +26,16 @@ def profile(request):
  return render(request, 'app/profile.html')
 
 def address(request):
- return render(request, 'app/address.html')
+ add = Customer.objects.filter(user=request.user)
+ return render(request, 'app/address.html',{'add':add,'active':'btn-primary'})
 
 def orders(request):
  return render(request, 'app/orders.html')
 
-def change_password(request):
- return render(request, 'app/changepassword.html')
 
 def mobile(request):
  return render(request, 'app/mobile.html')
 
-def login(request):
- return render(request, 'app/login.html')
-
-#def customerregistration(request):
- #return render(request, 'app/customerregistration.html')
 
 class CustomerRegistrationView(View):
  def get(self,request):
@@ -57,3 +51,22 @@ class CustomerRegistrationView(View):
 
 def checkout(request):
  return render(request, 'app/checkout.html')
+
+class ProfileView(View):
+ def get(self,request):
+  form =CustomerProfileForm()
+  return render(request,'app/profile.html',{'form':form, 'active':'btn-primary'})
+
+def post(self,request):
+  form= CustomerProfileForm(request.POST)
+  if form.is_valid():
+   user=request.user
+   name = form.cleaned_date['name']
+   locality = form.cleaned_date['locality']
+   city = form.cleaned_date['city']
+   state = form.cleaned_date['state']
+   zipcode = form.cleaned_date['zipcode']
+   reg = Customer(user=user, name=name, locality=locality, city=city, state=state, zipcode=zipcode)
+   reg.save()
+   messages.success(request,'Congratulations! Profile Update Successfully ')
+  return render(request, 'app/profile.html',{'form':form,'active':'btn-primary'})
