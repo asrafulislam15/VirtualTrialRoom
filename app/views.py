@@ -18,8 +18,10 @@ class ProductView(View):
 
 class ProductDetailView(View):
  def get(self,request,pk):
+  item_already_in_cart = False
+  item_already_in_cart = Cart.objects.filter(Q(product='product.id') & Q(user=request.user)).exists()
   product=Product.objects.get(pk=pk)
-  return render(request, 'app/productdetail.html',{'product':product})
+  return render(request,'app/productdetail.html',{'product': product, 'item_already_in_cart': item_already_in_cart})
 
 @login_required
 def add_to_cart(request):
@@ -38,7 +40,7 @@ def show_cart(request):
     amount= 0.0
     shipping_amount = 70.0
     total_amount = 0.0
-    cart_product = [p for p in Cart.objects.all() if p.user==user]
+    cart_product = [p for p in Cart.objects.all() if p.user == user]
     #print(cart_product)
     if cart_product:
        for p in cart_product:
