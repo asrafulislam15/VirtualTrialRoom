@@ -4,6 +4,10 @@ import os
 import sys
 
 
+class ImportError(object):
+    pass
+
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'VirtualTrialDress.settings')
